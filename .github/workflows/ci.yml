@@ -10,21 +10,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.12.7'
+          python-version: '3.12'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install mlflow==2.19.0 scikit-learn pandas numpy
 
-      - name: Set MLflow Tracking URI
+      - name: Start MLflow Server
         run: |
-          echo "MLFLOW_TRACKING_URI=http://127.0.0.1:5000" >> $GITHUB_ENV
+          nohup mlflow server --host 127.0.0.1 --port 5000 &
+          sleep 5
 
       - name: Run MLflow Project
         run: |
@@ -32,26 +33,26 @@ jobs:
 
       - name: Cache Dataset
         id: cache-dataset
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
-          path: namadataset_preprocessing/customer_churn_preprocessing.csv
+          path: MLProject/namadataset_preprocessing/customer_churn_preprocessing.csv
           key: ${{ runner.os }}-dataset
 
       - name: Upload artifacts to GitHub
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mlflow-trained-artifacts
           path: mlruns/
 
       - name: Log in to Docker Hub
-        if: success()
-        uses: docker/login-action@v2
+        continue-on-error: true
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: success()
+        continue-on-error: true
         run: |
           mlflow models build-docker -m "runs:/latest/model" -n "andyputrapratama/customer-churn-model:latest"
           docker push andyputrapratama/customer-churn-model:latest

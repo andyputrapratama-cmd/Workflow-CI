@@ -18,7 +18,7 @@ def load_data():
 def train_model():
     X_train, X_test, y_train, y_test = load_data()
     
-    with mlflow.start_run():
+    with mlflow.start_run(nested=True):
         params = {"n_estimators": 200, "max_depth": 10, "random_state": 42}
         mlflow.log_params(params)
         

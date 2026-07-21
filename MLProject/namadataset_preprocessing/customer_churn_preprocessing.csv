@@ -1,0 +1,4 @@
+age,tenure_months,monthly_charges,total_charges,contract_type_One year,contract_type_Two year,has_internet_Yes,churn
+0.1,0.5,1.2,0.8,1,0,1,1
+-0.2,1.1,-0.5,-0.1,0,1,0,0
+0.8,-0.9,1.5,0.2,0,0,1,1

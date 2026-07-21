@@ -29,7 +29,7 @@ jobs:
 
       - name: Run MLflow Project
         run: |
-          mlflow run MLProject -P n_estimators=100 -P max_depth=5 --env-manager=local
+          mlflow run MLProject --experiment-name "Customer_Churn_Basic" -P n_estimators=100 -P max_depth=5 --env-manager=local
 
       - name: Cache Dataset
         id: cache-dataset
